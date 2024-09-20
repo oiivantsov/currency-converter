@@ -1,0 +1,25 @@
+/* Apply a sans-serif font to all text elements */
+.root {
+    -fx-font-family: 'Arial', sans-serif;
+}
+
+/* Customize font size and style for labels */
+.label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* Customize font size for TextFields */
+.text-field {
+    -fx-font-size: 14px;
+}
+
+/* Customize font size for ComboBox */
+.combo-box {
+    -fx-font-size: 14px;
+}
+
+/* Customize font size for Buttons */
+.button {
+    -fx-font-size: 14px;
+}

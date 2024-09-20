@@ -1,5 +1,6 @@
 package view;
 
+import controller.ConverterController;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -8,23 +9,55 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.application.Platform;
+import model.CurrencyCode;
+
+import java.util.function.UnaryOperator;
+import javafx.scene.control.TextFormatter.Change;
 
 public class ConverterUI extends Application {
+
+    // Controller
+    ConverterController controller;
+
+    // Create TextFields
+    TextField textFieldAmount;
+    TextField textFieldResult;
+
+    // ComboBoxes
+    ComboBox<CurrencyCode> comboBoxFrom;
+    ComboBox<CurrencyCode> comboBoxTo;
 
     @Override
     public void start(Stage primaryStage) {
         // Create ComboBoxes
-        ComboBox<String> comboBoxFrom = new ComboBox<>();
-        comboBoxFrom.setPromptText("From");
+        // from
+        comboBoxFrom = new ComboBox<>();
+        comboBoxFrom.getItems().addAll(CurrencyCode.values());
+        comboBoxFrom.getSelectionModel().selectFirst(); // Select the first item by default
         comboBoxFrom.setMinWidth(150);
-        ComboBox<String> comboBoxTo = new ComboBox<>();
-        comboBoxTo.setPromptText("To");
+
+        // to
+        comboBoxTo = new ComboBox<>();
+        comboBoxTo.getItems().addAll(CurrencyCode.values());
+        comboBoxTo.getSelectionModel().select(1); // Select the second item by default
         comboBoxTo.setMinWidth(150);
 
         // Create TextFields
-        TextField textFieldAmount = new TextField();
-        TextField textFieldResult = new TextField();
+        textFieldAmount = new TextField();
+        textFieldResult = new TextField();
         textFieldResult.setEditable(false); // Result field should not be editable
+
+        // prevent user from entering non-numeric values
+        UnaryOperator<Change> filter = change -> {
+            String newText = change.getControlNewText();
+            if (newText.matches("([0-9]*\\.?[0-9]*)")) { // Allow only numbers and at most one decimal point
+                return change;
+            }
+            return null; // Reject the change
+        };
+        TextFormatter<String> textFormatter = new TextFormatter<>(filter);
+        textFieldAmount.setTextFormatter(textFormatter);
+
 
         // Create Labels
         Label labelFrom = new Label("From");
@@ -35,6 +68,25 @@ public class ConverterUI extends Application {
         // Create Buttons
         Button swapButton = new Button("Swap");
         Button convertButton = new Button("Convert");
+
+        // Event handlers (good example of swapping values also for DSA :))
+        swapButton.setOnAction(e -> {
+            CurrencyCode temp = comboBoxFrom.getValue();
+            comboBoxFrom.setValue(comboBoxTo.getValue());
+            comboBoxTo.setValue(temp);
+        });
+
+        convertButton.setOnAction(e -> {
+            try {
+                controller.convert();
+            } catch (NumberFormatException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please enter a valid amount.");
+                alert.showAndWait();
+            }
+        });
 
         // Layouts
         GridPane leftPane = new GridPane();
@@ -91,11 +143,17 @@ public class ConverterUI extends Application {
         // Add all the components to the root layout
         root.getChildren().addAll(menuBar, mainLayout, bottomBox);
 
-        // Set the Scene and Stage
-        Scene scene = new Scene(root, 450, 250);
+        // Apply the CSS file to the scene
+        Scene scene = new Scene(root, 500, 300);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
         primaryStage.setTitle("Converter");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    public void init() {
+        controller = new ConverterController(this);
     }
 
     // Method to display help dialog with instructions
@@ -108,5 +166,21 @@ public class ConverterUI extends Application {
                 + "3. Click 'Convert' to see the result.\n"
                 + "4. Use 'Swap' to switch the 'From' and 'To' units.");
         helpDialog.showAndWait();
+    }
+
+    public double getAmount() {
+        return Double.parseDouble(textFieldAmount.getText());
+    }
+
+    public void showResult(double result) {
+        textFieldResult.setText(String.format("%.2f", result));
+    }
+
+    public CurrencyCode getFrom() {
+        return comboBoxFrom.getValue();
+    }
+
+    public CurrencyCode getTo() {
+        return comboBoxTo.getValue();
     }
 }
