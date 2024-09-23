@@ -6,7 +6,6 @@
 /* Customize font size and style for labels */
 .label {
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
 }
 
 /* Customize font size for TextFields */
@@ -18,6 +17,13 @@
 .combo-box {
     -fx-font-size: 14px;
 }
+
+/* Customize font size for Alert */
+.dialog-pane .content {
+    -fx-font-size: 14; /* Increase text size */
+    -fx-font-family: Arial, sans-serif; /* Optional: change font family */
+}
+
 
 /* Customize font size for Buttons */
 .button {

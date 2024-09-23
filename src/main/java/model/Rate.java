@@ -2,8 +2,8 @@ package model;
 
 public enum Rate {
     USD(1.0),
-    GBP(0.74),
-    EUR(0.92);
+    GBP(0.75),
+    EUR(0.90);
 
     private final double rateToUSD;
 

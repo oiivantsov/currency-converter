@@ -29,20 +29,20 @@ public class ConverterUI extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // Create ComboBoxes
+        // Two choice boxes or combo boxes for selecting the source currency and the target currency.
         // from
         comboBoxFrom = new ComboBox<>();
+        // The choice boxes should contain a list of available currencies that the user can select from.
+        // The list of currencies should be retrieved from the model, which should contain the abbreviation, name, and conversion rate to a fixed currency (e.g., USD).
         comboBoxFrom.getItems().addAll(CurrencyCode.values());
         comboBoxFrom.getSelectionModel().selectFirst(); // Select the first item by default
-        comboBoxFrom.setMinWidth(150);
 
         // to
         comboBoxTo = new ComboBox<>();
         comboBoxTo.getItems().addAll(CurrencyCode.values());
         comboBoxTo.getSelectionModel().select(1); // Select the second item by default
-        comboBoxTo.setMinWidth(150);
 
-        // Create TextFields
+        // Two text fields for inputting the amount to convert and displaying the converted amount.
         textFieldAmount = new TextField();
         textFieldResult = new TextField();
         textFieldResult.setEditable(false); // Result field should not be editable
@@ -59,7 +59,7 @@ public class ConverterUI extends Application {
         textFieldAmount.setTextFormatter(textFormatter);
 
 
-        // Create Labels
+        // Labels to indicate the purpose of each input field, choice box, and the result field.
         Label labelFrom = new Label("From");
         Label labelTo = new Label("To");
         Label labelAmount = new Label("Amount");
@@ -76,6 +76,7 @@ public class ConverterUI extends Application {
             comboBoxTo.setValue(temp);
         });
 
+        // A button labeled "Convert" to initiate the currency conversion.
         convertButton.setOnAction(e -> {
             try {
                 controller.convert();
@@ -105,6 +106,7 @@ public class ConverterUI extends Application {
         rightPane.add(textFieldResult, 0, 1);
         rightPane.add(labelResult, 0, 2);
 
+        // The labels for the choice boxes should appear right on top of each choice box.
         VBox leftBox = new VBox(10, labelFrom, comboBoxFrom, textFieldAmount, labelAmount);
         VBox rightBox = new VBox(10, labelTo, comboBoxTo, textFieldResult, labelResult);
 
@@ -133,6 +135,7 @@ public class ConverterUI extends Application {
         menuFile.getItems().add(exitItem);
 
         // Help Menu
+        // The user interface should provide clear instructions on how to use the converter.
         Menu menuHelp = new Menu("Help");
         MenuItem helpItem = new MenuItem("How to use");
         helpItem.setOnAction(e -> showHelpDialog()); // Show instructions when clicked
@@ -141,13 +144,16 @@ public class ConverterUI extends Application {
         menuBar.getMenus().addAll(menuFile, menuHelp);
 
         // Add all the components to the root layout
+        // appropriate layout(s) to organize the components effectively
         root.getChildren().addAll(menuBar, mainLayout, bottomBox);
 
+        // a window with appropriate dimensions to display the converter components
+        Scene scene = new Scene(root, 500, 250);
         // Apply the CSS file to the scene
-        Scene scene = new Scene(root, 500, 300);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
-        primaryStage.setTitle("Converter");
+        // a title indicating the purpose of the application, such as "Currency Converter."
+        primaryStage.setTitle("Currency Converter");
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -157,6 +163,7 @@ public class ConverterUI extends Application {
     }
 
     // Method to display help dialog with instructions
+    // The user interface should provide clear instructions on how to use the converter.
     private void showHelpDialog() {
         Alert helpDialog = new Alert(Alert.AlertType.INFORMATION);
         helpDialog.setTitle("How to use the Converter");
@@ -165,6 +172,8 @@ public class ConverterUI extends Application {
                 + "2. Enter the amount in the 'Amount' field.\n"
                 + "3. Click 'Convert' to see the result.\n"
                 + "4. Use 'Swap' to switch the 'From' and 'To' units.");
+        DialogPane dialogPane = helpDialog.getDialogPane();
+        dialogPane.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         helpDialog.showAndWait();
     }
 

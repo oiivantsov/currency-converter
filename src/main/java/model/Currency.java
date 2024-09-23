@@ -1,5 +1,6 @@
 package model;
 
+// model, which contains the abbreviation, name, and conversion rate to a fixed currency (e.g., USD).
 public class Currency {
     private CurrencyCode code;
     private double amount;
