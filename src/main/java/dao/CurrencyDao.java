@@ -1,54 +1,44 @@
 package dao;
 
-import datasource.MariaDbConnection;
 import entity.Currency;
+import jakarta.persistence.EntityManager;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CurrencyDao {
 
-    public List<String> getAllCodes() {
-        String sql = "SELECT code FROM currency";
-        List<String> codes = new ArrayList<>();
+    public void persist(Currency c) {
+        EntityManager em = datasource.MariaDbJpaConnection.getInstance();
+        em.getTransaction().begin();
+        em.persist(c);
+        em.getTransaction().commit();
+    }
 
-        try (Connection conn = MariaDbConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+    public Currency find(String code) {
+        EntityManager em = datasource.MariaDbJpaConnection.getInstance();
+        Currency c = em.find(Currency.class, code);
+        return c;
+    }
 
-            while (rs.next()) {
-                codes.add(rs.getString(1));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+    public List<String> findAllCodes() {
+        EntityManager em = datasource.MariaDbJpaConnection.getInstance();
+        List<String> codes = em.createQuery("select c.code from Currency c", String.class).getResultList();
         return codes;
     }
 
-    public double getRateByCode(String code) {
-        String sql = "SELECT exchange_rate FROM currency WHERE `code`=?";
-        double rate = 0;
-
-        try (Connection conn = MariaDbConnection.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setString(1, code);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    rate = rs.getDouble(1);
-                }
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return rate;
+    // Updates the entity if it exists, or creates a new one if it does not
+    public void update(Currency c) {
+        EntityManager em = datasource.MariaDbJpaConnection.getInstance();
+        em.getTransaction().begin();
+        em.merge(c);
+        em.getTransaction().commit();
     }
+
+    public void delete(Currency c) {
+        EntityManager em = datasource.MariaDbJpaConnection.getInstance();
+        em.getTransaction().begin();
+        em.remove(c);
+        em.getTransaction().commit();
+    }
+
 }
