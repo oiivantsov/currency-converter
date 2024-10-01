@@ -1,7 +1,9 @@
 package controller;
 
 import dao.CurrencyDao;
+import dao.TransactionDao;
 import entity.Currency;
+import entity.Transaction;
 import view.ConverterUI;
 
 import java.util.List;
@@ -9,6 +11,7 @@ import java.util.List;
 public class ConverterController {
     ConverterUI converterUI;
     CurrencyDao currencyDao = new CurrencyDao();
+    TransactionDao transactionDao = new TransactionDao();
 
     public ConverterController(ConverterUI converterUI) {
         this.converterUI = converterUI;
@@ -49,6 +52,7 @@ public class ConverterController {
         double amountInUSD = amount / rateFrom;
         double result = amountInUSD * rateTo;
 
+        addTransaction(currencyFrom, currencyTo, amount, result);
         converterUI.showResult(result);
     }
 
@@ -70,5 +74,10 @@ public class ConverterController {
 
     public Currency getCurrency(String code) {
         return currencyDao.find(code);
+    }
+
+    public void addTransaction(Currency sourceCurrency, Currency destinationCurrency, double sourceAmount, double destinationAmount) {
+        Transaction transaction = new Transaction(sourceCurrency, destinationCurrency, sourceAmount, destinationAmount);
+        transactionDao.persist(transaction);
     }
 }
