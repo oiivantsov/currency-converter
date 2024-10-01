@@ -61,6 +61,21 @@ The application follows an MVC (Model-View-Controller) pattern to ensure separat
 ## Database Configuration
 
 The application uses JPA to interact with a MariaDB database. Update `persistence.xml` to create the necessary tables and configure database connection properties (`database URL`, `username`, `password`).
+In `data.sql`, initial data for the `Currency` table is provided to bootstrap the application with commonly used currencies. This file contains the following SQL script:
+
+```sql
+INSERT INTO Currency (`code`, `name`, `exchange_rate`) VALUES
+    ('USD', 'US Dollar', 1.000000),
+    ('EUR', 'Euro', 0.930000),
+    ('GBP', 'British Pound', 0.810000),
+    ('JPY', 'Japanese Yen', 149.000000),
+    ('AUD', 'Australian Dollar', 1.540000),
+    ('CAD', 'Canadian Dollar', 1.370000),
+    ('CHF', 'Swiss Franc', 0.910000),
+    ('CNY', 'Chinese Yuan', 7.300000);
+```
+
+Make sure this file (`data.sql`) is executed when setting up the database to ensure that the initial currency data is loaded into your system. You can use your database tool to run this script or configure it to run automatically when the application starts.
 
 ## Dependencies
 
